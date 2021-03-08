@@ -1,7 +1,7 @@
 # LAB 2: File Transfer
 
 ## Description
--The purpose of this program is to transfer a file from a client to a
+- The purpose of this program is to transfer a file from a client to a
    server.
 
 ## How to use
