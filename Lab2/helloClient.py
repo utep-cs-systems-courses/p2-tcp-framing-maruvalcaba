@@ -9,14 +9,15 @@ import framedSocket
 switchesVarDefaults = (
     (('-s', '--server'), 'server', "127.0.0.1:50001"),
     (('-d', '--delay'), 'delay', "0"),
+    (('-i', '--inputf'), 'inputf', "text.txt"),
+    (('-o', '--outputf'), 'outputf', "text.txt"),
     (('-?', '--usage'), "usage", False), # boolean (set if present)
     )
-
 
 progname = "framedClient"
 paramMap = params.parseParams(switchesVarDefaults)
 
-server, usage  = paramMap["server"], paramMap["usage"]
+server, usage, inputf, outputf  = paramMap["server"], paramMap["usage"], paramMap["inputf"], paramMap["outputf"]
 
 if usage:
     params.usage()
@@ -58,10 +59,12 @@ if delay != 0:
     time.sleep(delay)
     print("done sleeping")
 
+outfile = outputf
+infile = inputf
 
 framedSocket.sendMessage(s, b"Send")
-framedSocket.sendMessage(s, b"text.txt")
-fd = os.open("./OutFiles/text.txt", os.O_RDONLY)
+framedSocket.sendMessage(s, infile.encode())
+fd = os.open("./OutFiles/"+outfile, os.O_RDONLY)
 next = 0
 limit = 0
 sbuf = ""
