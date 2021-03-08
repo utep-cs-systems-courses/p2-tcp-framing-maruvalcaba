@@ -30,8 +30,8 @@ class SocketFramed:
         intlenMsg = int(lenMsg)
         msg = ""
         while((len(msg) < intlenMsg)):
-            msg += self.buff[0]
             if(len(self.buff) == 0):
                 self.buff = self.cs.recv(100).decode()
+            msg += self.buff[0]
             self.buff = self.buff[1:]
         return msg
