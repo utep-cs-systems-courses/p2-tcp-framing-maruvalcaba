@@ -1,29 +1,37 @@
+# Manuel Ruvalcaba
+# March 7, 2021
+# Theory of Operating Systems
+# Dr. Freudenthal
+# This is the framed socket of a file transfer program.
 
-def sendMessage(socket, message):
-    msglen = str(len(message))
-    msg = msglen.encode()+b":"+message
-    while len(msg):
-        bytes = socket.send(msg)
-        msg = msg[bytes:]
-
-buffer = ""
+class SocketFramed:
+    def __init__(self, connectedSocket):
+        self.cs = connectedSocket
+        self.buff = ""
         
-def recieveMessage(socket):
-    global buffer
-    buffer += socket.recv(100).decode()
-    lenMsg = ""
-    for i in range(len(buffer)):
-        if buffer[i] == ":":
-            buffer = buffer[i+1:]
-            break
-        lenMsg += buffer[i]
-    if(lenMsg == ""):
-        return ""
-    intlenMsg = int(lenMsg)
-    msg = ""
-    while((len(msg) < intlenMsg)):
-        msg += buffer[0]
-        if(len(buffer) == 1):
-            buffer = socket.recv(100).decode()
-        buffer = buffer[1:]
-    return msg
+    def sendMessage(self, message):
+        msglen = str(len(message))
+        msg = msglen.encode()+b":"+message
+        while len(msg):
+            bytes = self.cs.send(msg)
+            msg = msg[bytes:]
+
+    def recieveMessage(self):
+        if(self.buff == ""):
+            self.buff += self.cs.recv(100).decode()
+        lenMsg = ""
+        for i in range(len(self.buff)):
+            if self.buff[i] == ":":
+                self.buff = self.buff[i+1:]
+                break
+            lenMsg += self.buff[i]
+        if(lenMsg == ""):
+            return ""
+        intlenMsg = int(lenMsg)
+        msg = ""
+        while((len(msg) < intlenMsg)):
+            msg += self.buff[0]
+            if(len(self.buff) == 0):
+                self.buff = self.cs.recv(100).decode()
+            self.buff = self.buff[1:]
+        return msg
