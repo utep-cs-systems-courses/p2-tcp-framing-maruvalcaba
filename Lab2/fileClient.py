@@ -29,11 +29,11 @@ progname = "fileClient"
  #   params.usage()
 
 
-try:
-    clientFile = sys.argv[1]
+try:                            # tries to get the necessary parameters
+    clientFile = sys.argv[1]        
     serverHost, serverFile = re.split(":", sys.argv[2])
     serverPort = 50001
-except:
+except:                         # if it fails, prints syntax.
     myIO.myPrint("Bad param format: '%s'. Should be $ ./fileClient Send {clientFile} {host:serverFile}\n" % sys.argv)
     sys.exit(1)
 
@@ -67,15 +67,15 @@ if delay != 0:
     time.sleep(delay)
     print("done sleeping")
 '''
-fs = framedSocket.SocketFramed(s)
-fs.sendMessage(sys.argv[0].encode())
-fs.sendMessage(serverFile.encode())
-response = fs.recieveMessage()
+fs = framedSocket.SocketFramed(s)                # new framed socket
+fs.sendMessage(sys.argv[0].encode())             # sent the mode, "Send", "Recv" later if needed
+fs.sendMessage(serverFile.encode())              # sent the file name to be saved on server side
+response = fs.recieveMessage()                   # gets response from the server, "OK" or "NO"
 if(response == "OK"):
-    message = myIO.myReadFile(clientFile)
-    fs.sendMessage(message.encode())
-    result = fs.recieveMessage()
-    myIO.myPrint(result+"\n")
+    message = myIO.myReadFile(clientFile)        # reads the contents of the client side file
+    fs.sendMessage(message.encode())             # sends it to the server in the framed send
+    result = fs.recieveMessage()                 # recieves a result of the transfer
+    myIO.myPrint(result+"\n")                    # prints result, "SUCCESS" or "FAILURE WRITING FILE"
 else:
-    myIO.myPrint("File name already exists!\n")
+    myIO.myPrint("File name already exists!\n")  # response was "NO"
 s.close()
