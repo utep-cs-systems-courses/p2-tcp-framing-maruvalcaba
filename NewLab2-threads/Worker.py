@@ -11,18 +11,19 @@ import threading
 threadNum = 0
 inTransfer = set()
 transferLock = threading.Lock()
-class Worker(Thread):
+
+class Worker(Thread):                       # for my threaded file transfer
     def __init__(self, conn, addr):
         global threadNum
         Thread.__init__(self, name="Thread-%d" % threadNum);
         threadNum += 1
-        self.conn = conn
+        self.conn = conn                    # the connection properties
         self.addr = addr
 
-    def checkTransfer(self, fileName):
+    def checkTransfer(self, fileName):      # checks if a file is already in transfer
         global inTransfer
         global transferLock
-        transferLock.acquire()
+        transferLock.acquire()              # acquires a lock on checking if a file is in use
         if fileName in inTransfer:
             canTransfer = False
         else:
@@ -31,7 +32,7 @@ class Worker(Thread):
         transferLock.release()
         return canTransfer
 
-    def endTransfer(self, fileName):
+    def endTransfer(self, fileName):        # removes the file from the files currently in transfer
         global inTransfer
         inTransfer.remove(fileName)
 

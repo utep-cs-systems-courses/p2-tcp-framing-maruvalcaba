@@ -20,11 +20,14 @@ class SocketFramed:
         if(self.buff == ""):
             self.buff += self.cs.recv(100).decode() # if there is nothing in the buffer, it will recieve
         lenMsg = ""
-        for i in range(len(self.buff)):          # this for loop gets the message length
-            if self.buff[i] == ":":
-                self.buff = self.buff[i+1:]
+        while(True):          # this for loop gets the message length
+            if len(self.buff) == 0:
+                self.buff = self.cs.recv(100).decode()
+            if self.buff[0] == ":":
+                self.buff = self.buff[1:]
                 break
-            lenMsg += self.buff[i]
+            lenMsg += self.buff[0]
+            self.buff = self.buff[1:]
         if(lenMsg == ""):                        
             return ""
         intlenMsg = int(lenMsg)
